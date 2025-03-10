@@ -58,8 +58,37 @@ const getSingleProduct = async (id) => {
   });
 };
 
+async function updateProduct(id, productData) {
+  return prisma.product.update({
+    where: { id },
+    data: {
+      name: productData.name,
+      price: productData.price,
+      description: productData.description,
+      images: {
+        deleteMany: {},
+        createMany: {
+          data: productData.images,
+        },
+      },
+    },
+    include: {
+      images: true,
+    },
+  });
+}
+
+const deleteProduct = async (id) => {
+  return await prisma.$transaction([
+    prisma.image.deleteMany({ where: { productId: id } }),
+    prisma.product.delete({ where: { id } }),
+  ]);
+};
+
 module.exports = {
   createProduct,
   getAllProducts,
   getSingleProduct,
+  updateProduct,
+  deleteProduct,
 };
