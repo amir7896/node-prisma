@@ -6,3 +6,9 @@ exports.AUTH_MSG = {
 exports.TOKEN = {
     CREATED: 'Token created',
 }
+
+exports.PRODUCT ={
+    CREATED: "Product created successfully",
+    DELETED: "Product deleted successfully",
+    UPDATED: "Product updated successfully"
+}

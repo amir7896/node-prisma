@@ -5,7 +5,7 @@ const { ERROR_CODES } = require("../constants");
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRY = "1h";
+const JWT_EXPIRY = "7d";
 
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);

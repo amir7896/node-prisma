@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const authRoutes = require("./routes/auth.routes");
 const userRoutes = require("./routes/users.routes");
+const productRoutes  = require('./routes/product.routes')
 const tokenCron = require("./cron/tokenCron");
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
+app.use('/api/product', productRoutes)
 
 // Start Token Cron Job
 // tokenCron.start();
