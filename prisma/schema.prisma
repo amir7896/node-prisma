@@ -18,6 +18,7 @@ model User {
   email    String  @unique
   password String
   products Product[]
+  orders   Order[]
 }
 
 model Token {
@@ -34,6 +35,8 @@ model Product {
   user        User    @relation(fields: [userId], references: [id])
   price       Float
   description String? // Optional description
+  orders      OrderItem[]
+
 }
 
 model Image {
@@ -42,4 +45,42 @@ model Image {
   publicUrl  String
   productId  String   @db.ObjectId
   product    Product  @relation(fields: [productId], references: [id])
+}
+
+
+model Order {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String      @db.ObjectId
+  user      User        @relation(fields: [userId], references: [id])
+  items     OrderItem[]
+  total     Float
+  createdAt DateTime    @default(now())
+  payment   Payment?
+} 
+
+model OrderItem{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model Payment {
+  id       String     @id @default(auto())    @map("_id")   @db.ObjectId
+  orderId  String     @db.ObjectId @unique
+  order     Order     @relation(fields: [orderId], references: [id])
+  amount    Float
+  status    PaymentStatus  @default(PENDING)  
+  createdAt DateTime  @default(now())
+
+
 }
