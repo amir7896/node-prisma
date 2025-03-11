@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { sanitizeInput } = require("../utils/sanitize");
 
 const prisma = new PrismaClient();
 
@@ -19,23 +20,52 @@ async function createProduct(data) {
   });
 }
 
-async function getAllProducts() {
-  return await prisma.product.findMany({
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      description: true,
-      images: true,
-      user: {
-        select: {
-          id: true,
-          email: true,
-          // Add userName when available in the DB
+async function getAllProducts(search, page, limit) {
+  const sanitizedPage = Math.max(1, parseInt(page));
+  const sanitizedLimit = Math.min(100, Math.max(1, parseInt(limit)));
+  const skip = (sanitizedPage - 1) * sanitizedLimit;
+
+  // Sanitize search input
+  const sanitizedSearch = sanitizeInput(search);
+
+  // Create search filter only if a valid search term exists
+  const searchFilter = sanitizedSearch
+    ? {
+        OR: [
+          { name: { contains: sanitizedSearch, mode: "insensitive" } },
+          { description: { contains: sanitizedSearch, mode: "insensitive" } },
+        ],
+      }
+    : {};
+
+  const [products, totalDocuments] = await prisma.$transaction([
+    prisma.product.findMany({
+      where: searchFilter,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        description: true,
+        images: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
         },
       },
-    },
-  });
+      skip,
+      take: sanitizedLimit,
+    }),
+    prisma.product.count({ where: searchFilter }),
+  ]);
+
+  return {
+    totalDocuments,
+    currentPage: sanitizedPage,
+    totalPages: Math.ceil(totalDocuments / sanitizedLimit),
+    products,
+  };
 }
 
 const getSingleProduct = async (id) => {

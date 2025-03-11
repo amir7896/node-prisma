@@ -24,8 +24,19 @@ exports.createProduct = async (req, res) => {
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await ProductService.getAllProducts();
-    return res.status(STATUS_CODE.OK).json({ success: true, data: products });
+    // Destructure & validate query params
+    const { search = "", page = "1", limit = "10" } = req.query;
+
+    const data = await ProductService.getAllProducts(search, page, limit);
+
+    return res.status(STATUS_CODE.OK).json({
+      success: true,
+      success: true,
+      totalDocuments: data.totalDocuments,
+      currentPage: data.currentPage,
+      totalPages: data.totalPages,
+      data: data.products,
+    });
   } catch (error) {
     return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
@@ -78,13 +89,11 @@ exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const deleteProduct = await ProductService.deleteProduct(id);
-    return res
-      .status(STATUS_CODE.OK)
-      .json({
-        success: true,
-        message: SUCCESS_MSG.PRODUCT.DELETED,
-        data: deleteProduct,
-      });
+    return res.status(STATUS_CODE.OK).json({
+      success: true,
+      message: SUCCESS_MSG.PRODUCT.DELETED,
+      data: deleteProduct,
+    });
   } catch (error) {
     return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
