@@ -7,7 +7,7 @@ const createOrder = async (userId, items) => {
     const orderItems = items.map((item) => ({
       productId: item.productId,
       quantity: item.quantity,
-      price: item.price * item.quantity, // Price of order item 
+      price: item.price * item.quantity, // Price of order item
     }));
 
     const total = orderItems.reduce((acc, item) => acc + item.price, 0);
@@ -23,6 +23,12 @@ const createOrder = async (userId, items) => {
       },
     });
     return order;
+  });
+};
+
+const getAllOrders = async () => {
+  return await prisma.order.findMany({
+    include: { items: true },
   });
 };
 
@@ -59,6 +65,7 @@ const getTopSellingProducts = async (limit) => {
 
 module.exports = {
   createOrder,
+  getAllOrders,
   getOrderById,
   getUserOrders,
   getTotalSales,

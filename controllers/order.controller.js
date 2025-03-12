@@ -21,6 +21,20 @@ const createOrder = async (req, res) => {
   }
 };
 
+const getAllOrders = async (req, res) => {
+  try {
+    const result = await orderService.getAllOrders();
+    return res.status(STATUS_CODE.OK).json({ success: true, data: result });
+  } catch (error) {
+    console.log("Error in getting allr orders", error);
+    return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: ERRORS.ERRORS.SERVER_ERROR,
+      error: error.message,
+    });
+  }
+};
+
 const getOrderById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -72,7 +86,7 @@ const getTotalSales = async (req, res) => {
 const getTopSellingProducts = async (req, res) => {
   try {
     const { limit } = req.query;
-    const parsedLimit  = parseFloat(limit)
+    const parsedLimit = parseFloat(limit);
     const result = await orderService.getTopSellingProducts(parsedLimit);
     return res.status(STATUS_CODE.OK).json({ success: true, data: result });
   } catch (error) {
@@ -87,6 +101,7 @@ const getTopSellingProducts = async (req, res) => {
 
 module.exports = {
   createOrder,
+  getAllOrders,
   getOrderById,
   getUserOrders,
   getTotalSales,

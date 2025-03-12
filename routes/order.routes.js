@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   createOrder,
+  getAllOrders,
   getOrderById,
   getUserOrders,
   getTotalSales,
@@ -10,6 +11,7 @@ const {
 const { authenticate } = require("../middlewares/authMiddleware");
 
 router.post("/create", authenticate, createOrder);
+router.get("/list", authenticate, getAllOrders);
 router.get("/:id", authenticate, getOrderById);
 router.get("/user/user-order", authenticate, getUserOrders);
 router.get("/sales/total-sales", authenticate, getTotalSales);
