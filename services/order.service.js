@@ -3,6 +3,8 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createOrder = async (userId, items) => {
+  const parsedUserId = parseInt(userId);
+
   return await prisma.$transaction(async (tx) => {
     const orderItems = items.map((item) => ({
       productId: item.productId,
@@ -14,7 +16,7 @@ const createOrder = async (userId, items) => {
 
     const order = await tx.order.create({
       data: {
-        userId,
+        userId: parsedUserId,
         total,
         items: { create: orderItems },
       },

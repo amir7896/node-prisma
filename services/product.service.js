@@ -47,6 +47,8 @@ async function getAllProducts(search, page, limit) {
         price: true,
         description: true,
         images: true,
+        createdAt: true,
+        updatedAt: true,
         user: {
           select: {
             id: true,
@@ -77,6 +79,8 @@ const getSingleProduct = async (id) => {
       price: true,
       description: true,
       images: true,
+      createdAt: true,
+      updatedAt: true,
       user: {
         select: {
           id: true,
@@ -89,6 +93,8 @@ const getSingleProduct = async (id) => {
 };
 
 async function updateProduct(id, productData) {
+  console.log('Update Product Id in service :', id)
+  console.log('Updated product data in service:', productData)
   return prisma.product.update({
     where: { id },
     data: {

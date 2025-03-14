@@ -49,7 +49,9 @@ exports.getAllProducts = async (req, res) => {
 exports.getSingleProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await ProductService.getSingleProduct(id);
+    const parsedId  = parseInt(id)
+
+    const product = await ProductService.getSingleProduct(parsedId);
 
     if (!product) {
       return res
@@ -70,13 +72,16 @@ exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const body = req.body;
-    const updatedProduct = await ProductService.updateProduct(id, body);
+
+    const parsedId  = parseInt(id)
+    const updatedProduct = await ProductService.updateProduct(parsedId, body);
     return res.status(STATUS_CODE.OK).json({
       success: true,
       message: SUCCESS_MSG.PRODUCT.UPDATED,
       data: updatedProduct,
     });
   } catch (error) {
+    console.log("Error in update product :", error)
     return res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: ERRORS.ERRORS.SERVER_ERROR,
@@ -88,7 +93,8 @@ exports.updateProduct = async (req, res) => {
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const deleteProduct = await ProductService.deleteProduct(id);
+    const parsedId  = parseInt(id)
+    const deleteProduct = await ProductService.deleteProduct(parsedId);
     return res.status(STATUS_CODE.OK).json({
       success: true,
       message: SUCCESS_MSG.PRODUCT.DELETED,

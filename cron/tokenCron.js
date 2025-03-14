@@ -15,9 +15,18 @@ exports.start = () => {
     try {
       const token = generateToken();
 
+      // Create token
       await prisma.token.create({
         data: { token },
       });
+
+      // Update Token
+      // await prisma.token.update({
+      //   where: { id: 1 },
+      //   data: {
+      //     token: token,
+      //   },
+      // });
 
       console.log(`New Token Generated & Stored: "${token}"`);
     } catch (error) {

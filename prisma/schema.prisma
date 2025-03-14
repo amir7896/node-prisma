@@ -8,46 +8,52 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  password  String
-  products  Product[]
-  orders    Order[]
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  password String
+  products Product[]
+  orders   Order[]
 }
 
 model Token {
-  id        Int       @id @default(autoincrement())
-  token     String    @unique
-  createdAt DateTime  @default(now())
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   images      Image[]
   userId      Int
-  user        User      @relation(fields: [userId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
   price       Float
   description String?
   orders      OrderItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Image {
-  id         Int       @id @default(autoincrement())
-  secureUrl  String
-  publicUrl  String
-  productId  Int
-  product    Product   @relation(fields: [productId], references: [id])
+  id        Int     @id @default(autoincrement())
+  secureUrl String
+  publicUrl String
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
 }
 
 model Order {
-  id        Int         @id @default(autoincrement())
-  userId    Int
-  user      User        @relation(fields: [userId], references: [id])
-  items     OrderItem[]
-  total     Float
-  createdAt DateTime    @default(now())
-  payment   Payment?
+  id      Int         @id @default(autoincrement())
+  userId  Int
+  user    User        @relation(fields: [userId], references: [id])
+  items   OrderItem[]
+  total   Float
+  payment Payment?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model OrderItem {
@@ -58,6 +64,9 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum PaymentStatus {
